@@ -19,7 +19,6 @@ public class User {
 
     private String email;
 
-
     @Column(name = "first_name")
     private String firstName;
 
@@ -41,9 +40,8 @@ public class User {
     @Column(name = "address")
     private String address;
 
-
     public String getFullName() {
-        return this.getFirstName() + " " + this.getLastName();
+        return this.getFirstName() + " "  + this.getLastName();
     }
 
 }

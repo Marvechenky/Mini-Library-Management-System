@@ -23,7 +23,7 @@ public class Book {
     private String title;
 
     @NotBlank(message = "subject field is required")
-    @Column(name = "book_subject")
+    @Column(name = "book_category")
     private String subject;
 
     @ManyToOne

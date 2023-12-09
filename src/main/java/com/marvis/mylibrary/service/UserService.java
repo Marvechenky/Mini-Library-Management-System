@@ -1,6 +1,7 @@
 package com.marvis.mylibrary.service;
 
 import com.marvis.mylibrary.data.dto.request.UserRequest;
+import com.marvis.mylibrary.data.dto.response.UserResponse;
 import com.marvis.mylibrary.data.model.User;
 
 import java.util.List;
@@ -9,9 +10,9 @@ import java.util.Optional;
 
 public interface UserService {
 
-    User addUser(UserRequest userRequest);
+    UserResponse addUser(UserRequest userRequest);
 
-    List<User> getAllUsers();
+    List<UserResponse> getAllUsers();
 
     User findUserById(Long id);
 

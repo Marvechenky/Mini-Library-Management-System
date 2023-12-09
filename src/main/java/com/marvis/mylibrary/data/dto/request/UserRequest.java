@@ -12,13 +12,6 @@ import org.hibernate.validator.constraints.Length;
 @AllArgsConstructor
 public class UserRequest {
 
-    private Long id;
-
-    @Pattern(regexp = "^[a-zA-Z\\d_+&*-]+(?:\\.[a-zA-Z\\d_+&*-]+)*@(?:[a-zA-Z\\d-]+\\.)+[a-zA-Z]{2,7}$",
-            message = "Invalid email address")
-    @Email(message = "Email field is required")
-    private String email;
-
     @NotBlank(message = "First name field is required")
     @Length(min = 6)
     private String firstName;
@@ -26,6 +19,10 @@ public class UserRequest {
     @NotBlank(message = "Last name field is required")
     @Length(min = 6)
     private String LastName;
+
+    @Email(regexp = "^[a-zA-Z\\d_+&*-]+(?:\\.[a-zA-Z\\d_+&*-]+)*@(?:[a-zA-Z\\d-]+\\.)+[a-zA-Z]{2,7}$",
+            message = "Email field is required")
+    private String email;
 
     private Gender gender;
 
@@ -37,7 +34,4 @@ public class UserRequest {
     private String address;
 
 
-    public String getFullName() {
-        return this.getFirstName() + " " + this.getLastName();
-    }
 }

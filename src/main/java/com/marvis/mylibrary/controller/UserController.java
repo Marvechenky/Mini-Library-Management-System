@@ -1,6 +1,7 @@
 package com.marvis.mylibrary.controller;
 
 import com.marvis.mylibrary.data.dto.request.UserRequest;
+import com.marvis.mylibrary.data.dto.response.UserResponse;
 import com.marvis.mylibrary.data.model.User;
 import com.marvis.mylibrary.service.UserService;
 import jakarta.validation.Valid;
@@ -20,8 +21,8 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/users/add")
-    public ResponseEntity<User> addUsers(@RequestBody @Valid UserRequest userRequest) {
-        User addedUser = userService.addUser(userRequest);
+    public ResponseEntity<UserResponse> addUsers(@RequestBody @Valid UserRequest userRequest) {
+        UserResponse addedUser = userService.addUser(userRequest);
         return new ResponseEntity<>(addedUser, HttpStatus.CREATED);
     }
 
@@ -33,9 +34,9 @@ public class UserController {
 
 
     @GetMapping("/users/all")
-    public ResponseEntity<List<User>> getUsers() {
-        List<User> users = userService.getAllUsers();
-        return new ResponseEntity<List<User>>(users, HttpStatus.OK);
+    public ResponseEntity<List<UserResponse>> getUsers() {
+        List<UserResponse> userResponses = userService.getAllUsers();
+        return new ResponseEntity<List<UserResponse>>(userResponses, HttpStatus.OK);
     }
 
     @GetMapping("/users/email/{email}")
@@ -46,14 +47,14 @@ public class UserController {
 
 
     @GetMapping("/users/fullName/{fullName}")
-    public ResponseEntity<Optional<User>> getUserByFullName(@PathVariable String fullName) {
+    public ResponseEntity<User> getUserByFullName(@PathVariable String fullName) {
         Optional<User> userWithFullName = userService.findUserByFullName(fullName);
-        return new ResponseEntity<>(userWithFullName, HttpStatus.OK);
+        return new ResponseEntity<>(userWithFullName.get(), HttpStatus.OK);
     }
 
 
     @PutMapping("/users/update-user/{id}")
-    public ResponseEntity<String> updateUser(@RequestBody @Valid Long id, UserRequest userRequest) {
+    public ResponseEntity<String> updateUser(@PathVariable Long id, @RequestBody @Valid UserRequest userRequest) {
         String message = "User successfully updated";
         userService.updateUser(id, userRequest);
         return new ResponseEntity<>(message, HttpStatus.OK);
