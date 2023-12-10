@@ -2,16 +2,16 @@ package com.marvis.mylibrary.controller;
 
 import com.marvis.mylibrary.data.dto.request.UserRequest;
 import com.marvis.mylibrary.data.dto.response.UserResponse;
-import com.marvis.mylibrary.data.model.User;
 import com.marvis.mylibrary.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -20,6 +20,7 @@ public class UserController {
 
     private final UserService userService;
 
+    @CacheEvict(value = "usersCache")
     @PostMapping("/users/add")
     public ResponseEntity<UserResponse> addUsers(@RequestBody @Valid UserRequest userRequest) {
         UserResponse addedUser = userService.addUser(userRequest);
@@ -27,12 +28,12 @@ public class UserController {
     }
 
     @GetMapping("/users/{id}")
-    public ResponseEntity<User> getUser(@PathVariable Long id) {
-        User user = userService.findUserById(id);
-        return new ResponseEntity<>(user, HttpStatus.OK);
+    public ResponseEntity<UserResponse> getUser(@PathVariable Long id) {
+        UserResponse userWithId = userService.findUserById(id);
+        return new ResponseEntity<>(userWithId, HttpStatus.OK);
     }
 
-
+    @Cacheable(value = "usersCache")
     @GetMapping("/users/all")
     public ResponseEntity<List<UserResponse>> getUsers() {
         List<UserResponse> userResponses = userService.getAllUsers();
@@ -40,31 +41,31 @@ public class UserController {
     }
 
     @GetMapping("/users/email/{email}")
-    public ResponseEntity<Optional<User>> getUserByEmail(@PathVariable String email) {
-        Optional<User> userWithEmail = userService.findUserByEmail(email);
+    public ResponseEntity<UserResponse> getUserByEmail(@PathVariable String email) {
+        UserResponse userWithEmail = userService.findUserByEmail(email);
         return new ResponseEntity<>(userWithEmail, HttpStatus.OK);
     }
 
 
     @GetMapping("/users/fullName/{fullName}")
-    public ResponseEntity<User> getUserByFullName(@PathVariable String fullName) {
-        Optional<User> userWithFullName = userService.findUserByFullName(fullName);
-        return new ResponseEntity<>(userWithFullName.get(), HttpStatus.OK);
+    public ResponseEntity<UserResponse> getUserByFullName(@PathVariable String fullName) {
+        UserResponse userWithFullName = userService.findUserByFullName(fullName);
+        return new ResponseEntity<>(userWithFullName, HttpStatus.OK);
     }
 
-
+    @CacheEvict(value = "usersCache")
     @PutMapping("/users/update-user/{id}")
     public ResponseEntity<String> updateUser(@PathVariable Long id, @RequestBody @Valid UserRequest userRequest) {
-        String message = "User successfully updated";
+        String updateMessage = "User successfully updated";
         userService.updateUser(id, userRequest);
-        return new ResponseEntity<>(message, HttpStatus.OK);
+        return new ResponseEntity<>(updateMessage, HttpStatus.OK);
     }
 
-
+    @CacheEvict(value = "usersCache")
     @DeleteMapping("/users/delete/{id}")
     public ResponseEntity<String> deleteUser(@PathVariable Long id) {
-        String message = "User successfully deleted";
+        String deleteMessage = "User successfully deleted";
         userService.deleteUser(id);
-        return new ResponseEntity<>(message, HttpStatus.OK);
+        return new ResponseEntity<>(deleteMessage, HttpStatus.OK);
     }
 }

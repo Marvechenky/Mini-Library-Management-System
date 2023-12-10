@@ -14,11 +14,11 @@ public interface UserService {
 
     List<UserResponse> getAllUsers();
 
-    User findUserById(Long id);
+    UserResponse findUserById(Long id);
 
-    Optional<User> findUserByEmail(String email);
+    UserResponse findUserByEmail(String email);
 
-    Optional<User> findUserByFullName(String fullName);
+    UserResponse findUserByFullName(String fullName);
 
     String updateUser(Long id, UserRequest userRequest);
 

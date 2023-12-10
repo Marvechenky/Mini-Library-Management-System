@@ -52,27 +52,43 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public User findUserById(Long id) {
-        return findUser(id);
+    public UserResponse findUserById(Long id) {
+        User foundUser = findUser(id);
+        return UserResponse.builder()
+                .id(foundUser.getId())
+                .fullName(foundUser.getFullName())
+                .gender(foundUser.getGender())
+                .email(foundUser.getEmail())
+                .build();
     }
 
 
     @Override
-    public Optional<User> findUserByEmail(String email) {
-        Optional<User> user = userRepository.findByEmailIgnoreCase(email);
-        if (user.isEmpty()) {
+    public UserResponse findUserByEmail(String email) {
+        User userFoundByEmail = userRepository.findByEmailIgnoreCase(email);
+        if (userFoundByEmail == null) {
             throw new UserNotFoundException("User not found for email: " + email);
         }
-        return user;
+        return UserResponse.builder()
+                .id(userFoundByEmail.getId())
+                .fullName(userFoundByEmail.getFullName())
+                .email(userFoundByEmail.getEmail())
+                .gender(userFoundByEmail.getGender())
+                .build();
     }
 
     @Override
-    public Optional<User> findUserByFullName(String fullName) {
-        Optional<User> user = userRepository.findByFullNameIgnoreCase(fullName);
-        if (user.isEmpty()) {
+    public UserResponse findUserByFullName(String fullName) {
+        User userFoundByFullName = userRepository.findByFullNameIgnoreCase(fullName);
+        if (userFoundByFullName == null) {
             throw new UserNotFoundException("User not found for full name: " + fullName);
         }
-        return user;
+        return UserResponse.builder()
+                .id(userFoundByFullName.getId())
+                .fullName(userFoundByFullName.getFullName())
+                .gender(userFoundByFullName.getGender())
+                .email(userFoundByFullName.getEmail())
+                .build();
     }
 
     @Override

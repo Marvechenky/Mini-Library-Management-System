@@ -28,9 +28,13 @@ public class Author {
     @Column(name = "last_name")
     private String lastName;
 
+    @Column(name = "full_name")
+    private String fullName;
+
+
 
     public String getFullName() {
-        return title + "" + firstName + " " + lastName;
+        return title + " " + firstName + " " + lastName;
     }
 
 }
