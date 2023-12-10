@@ -13,7 +13,6 @@ import java.time.LocalDate;
 @Builder
 @AllArgsConstructor
 public class BookResponse {
-
     private Long id;
     private String title;
     private String subject;

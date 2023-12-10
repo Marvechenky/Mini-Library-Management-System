@@ -2,9 +2,7 @@ package com.marvis.mylibrary.service;
 
 import com.marvis.mylibrary.data.dto.request.BookRequest;
 import com.marvis.mylibrary.data.dto.response.BookResponse;
-import com.marvis.mylibrary.data.model.Author;
 import com.marvis.mylibrary.data.model.Book;
-import com.marvis.mylibrary.data.repository.AuthorRepository;
 import com.marvis.mylibrary.data.repository.BookRepository;
 import com.marvis.mylibrary.exception.BookNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -18,43 +16,25 @@ import java.util.stream.Collectors;
 public class BookServiceImpl implements BookService {
 
     private final BookRepository bookRepository;
-    private final AuthorRepository authorRepository;
 
     @Override
     public BookResponse addBook(BookRequest bookRequest) {
-        Author author = authorRepository.findByFullName(bookRequest.getAuthor().getFullName());
-
-        if (author == null) {
-            author = Author.builder()
-                    .fullName(bookRequest.getAuthor().getFullName())
-                    .build();
-            author = authorRepository.save(author);
-        }
         Book book = Book.builder()
                 .title(bookRequest.getTitle())
                 .subject(bookRequest.getSubject())
-                .author(author)
+                .authorFullName(bookRequest.getAuthorFullName())
                 .isbn(bookRequest.getIsbn())
                 .yearOfPublication(bookRequest.getYearOfPublication())
                 .build();
-
        Book savedBook = bookRepository.save(book);
+
         return BookResponse.builder()
                 .id(savedBook.getId())
                 .title(savedBook.getTitle())
                 .subject(savedBook.getSubject())
-                .authorFullName(savedBook.getAuthor().getFullName())
+                .authorFullName(savedBook.getAuthorFullName())
                 .yearOfPublication(savedBook.getYearOfPublication())
                 .build();
-
-//        BookResponse response = BookResponse.builder()
-//                .id(savedBook.getId())
-//                .title(savedBook.getTitle())
-//                .subject(savedBook.getSubject())
-//                .authorFullName(savedBook.getAuthor().getFullName())
-//                .yearOfPublication(savedBook.getYearOfPublication())
-//                .build();
-//        return response;
     }
 
     @Override
@@ -74,9 +54,10 @@ public class BookServiceImpl implements BookService {
     public BookResponse findBookById(Long id) {
         Book foundBook = findBook(id);
         return BookResponse.builder()
+                .id(foundBook.getId())
                 .title(foundBook.getTitle())
                 .subject(foundBook.getSubject())
-                .authorFullName(foundBook.getAuthor().getFullName())
+                .authorFullName(foundBook.getAuthorFullName())
                 .yearOfPublication(foundBook.getYearOfPublication())
                 .build();
     }
@@ -90,9 +71,10 @@ public class BookServiceImpl implements BookService {
                     (String.format("Book with title: %s not found", title));
         }
         return BookResponse.builder()
+                .id(bookFoundByTitle.getId())
                 .title(bookFoundByTitle.getTitle())
                 .subject(bookFoundByTitle.getSubject())
-                .authorFullName(bookFoundByTitle.getAuthor().getFullName())
+                .authorFullName(bookFoundByTitle.getAuthorFullName())
                 .yearOfPublication(bookFoundByTitle.getYearOfPublication())
                 .build();
     }
@@ -105,9 +87,10 @@ public class BookServiceImpl implements BookService {
                     (String.format("Book with ISBN: %s not found", isbn));
         }
         return BookResponse.builder()
+                .id(bookFoundByIsbn.getId())
                 .title(bookFoundByIsbn.getTitle())
                 .subject(bookFoundByIsbn.getSubject())
-                .authorFullName(bookFoundByIsbn.getAuthor().getFullName())
+                .authorFullName(bookFoundByIsbn.getAuthorFullName())
                 .yearOfPublication(bookFoundByIsbn.getYearOfPublication())
                 .build();
     }
@@ -118,7 +101,7 @@ public class BookServiceImpl implements BookService {
 
         return books.stream()
                 .map(book -> new BookResponse( book.getId(), book.getTitle(),
-                        book.getSubject(), book.getAuthor().getFullName(),
+                        book.getSubject(), book.getAuthorFullName(),
                         book.getYearOfPublication()))
                 .collect(Collectors.toList());
 

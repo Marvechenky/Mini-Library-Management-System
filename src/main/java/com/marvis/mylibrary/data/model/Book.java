@@ -26,15 +26,17 @@ public class Book {
     @Column(name = "book_category")
     private String subject;
 
-    @ManyToOne
-    @JoinColumn(name = "author_id")
-    private Author author;
+    @Column(name = "author_name")
+    private String authorFullName;
+
+//    @ManyToOne
+//    @JoinColumn(name = "author_id")
+//    private Author author;
 
     @NotBlank(message = "isbn field is required")
     @Column(name = "isbn")
     private String isbn;
 
-    @NotBlank(message = "publication year field is required")
     @Column(name = "publication_year")
     private LocalDate yearOfPublication;
 

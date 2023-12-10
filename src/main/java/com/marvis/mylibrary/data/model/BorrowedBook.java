@@ -16,9 +16,9 @@ public class BorrowedBook {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-//    @NotBlank(message = "book name field is required")
-//    @Column(name = "book_name")
-//    private String bookName;
+    @NotBlank(message = "book name field is required")
+    @Column(name = "book_name")
+    private String bookName;
 
     @OneToOne
     @JoinColumn(name = "user_id")

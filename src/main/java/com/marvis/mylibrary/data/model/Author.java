@@ -32,7 +32,6 @@ public class Author {
     private String fullName;
 
 
-
     public String getFullName() {
         return title + " " + firstName + " " + lastName;
     }
