@@ -3,9 +3,12 @@ package com.marvis.mylibrary.service;
 import com.marvis.mylibrary.data.dto.request.BookRequest;
 import com.marvis.mylibrary.data.dto.response.BookResponse;
 import com.marvis.mylibrary.data.model.Book;
+import com.marvis.mylibrary.data.model.BorrowedBook;
 import com.marvis.mylibrary.data.repository.BookRepository;
 import com.marvis.mylibrary.exception.BookNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,6 +21,7 @@ public class BookServiceImpl implements BookService {
     private final BookRepository bookRepository;
 
     @Override
+    @CacheEvict(value = "allBooks", allEntries = true)
     public BookResponse addBook(BookRequest bookRequest) {
         Book book = Book.builder()
                 .title(bookRequest.getTitle())
@@ -38,11 +42,21 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
+    @CacheEvict(value = {"singleBook", "allBooks"}, key = "#id")
     public BookResponse borrowBook(BookRequest bookRequest) {
+        Book book = Book.builder()
+                .subject(bookRequest.getSubject())
+                .title(bookRequest.getTitle())
+                .authorFullName(bookRequest.getAuthorFullName())
+                .yearOfPublication(bookRequest.getYearOfPublication())
+                .build();
+
+        Book borrowedBook = bookRepository.save(book);
         return null;
     }
 
     @Override
+    @CacheEvict(value = {"singleBook", "allBooks"}, key = "#id")
     public String deleteBook(Long id) {
         String message = "Book successfully deleted";
         Book bookToDelete =  findBook(id);
@@ -96,6 +110,7 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
+    @Cacheable(value = "allBooks")
     public List<BookResponse> getAllBooks() {
         List<Book> books = bookRepository.findAll();
 

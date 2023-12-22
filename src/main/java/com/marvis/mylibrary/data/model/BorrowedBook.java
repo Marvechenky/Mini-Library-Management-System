@@ -9,7 +9,8 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity(name = "borrowed_books")
+@Entity
+@Table(name = "borrowed_books")
 public class BorrowedBook {
 
     @Id
@@ -32,7 +33,8 @@ public class BorrowedBook {
     @JoinColumn(name = "book_author")
     private Author bookAuthor;
 
-
+    @Column(name = "author_name")
+    private String authorFullName;
 
 
 }

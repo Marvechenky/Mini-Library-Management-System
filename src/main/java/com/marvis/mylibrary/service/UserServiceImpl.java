@@ -1,15 +1,17 @@
 package com.marvis.mylibrary.service;
 
+
 import com.marvis.mylibrary.data.dto.request.UserRequest;
 import com.marvis.mylibrary.data.dto.response.UserResponse;
 import com.marvis.mylibrary.data.model.User;
 import com.marvis.mylibrary.data.repository.UserRepository;
 import com.marvis.mylibrary.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -19,7 +21,10 @@ public class UserServiceImpl implements UserService{
     private final UserRepository userRepository;
 
 
+
+
     @Override
+    @CacheEvict(value = "allUsers", allEntries = true)
     public UserResponse addUser(UserRequest userRequest) {
         User user= User.builder()
                 .firstName(userRequest.getFirstName())
@@ -41,6 +46,7 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
+    @Cacheable(value = "allUsers")
     public List<UserResponse> getAllUsers() {
         List<User> users = userRepository.findAll();
 
@@ -52,6 +58,7 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
+    @Cacheable(value = "singleUser", key = "#id")
     public UserResponse findUserById(Long id) {
         User foundUser = findUser(id);
         return UserResponse.builder()
@@ -92,6 +99,7 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
+    @CacheEvict(value = {"singleUser", "allUsers"}, key = "#id")
     public String updateUser(Long id, UserRequest userRequest) {
         String message = "User successfully updated";
         User userToUpdate = findUser(id);
@@ -113,12 +121,14 @@ public class UserServiceImpl implements UserService{
 
 
     @Override
+    @CacheEvict(value = {"singleUser", "allUsers"}, key = "#id")
     public String deleteUser(Long id) {
         String message = "User successfully deleted";
         User userToDelete = findUser(id);
         userRepository.delete(userToDelete);
         return message;
     }
+
 
 
 

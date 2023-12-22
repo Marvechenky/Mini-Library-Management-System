@@ -11,7 +11,8 @@ import java.time.LocalDate;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity(name = "book")
+@Entity
+@Table(name = "book")
 public class Book {
 
     @Id
@@ -39,8 +40,6 @@ public class Book {
 
     @Column(name = "publication_year")
     private LocalDate yearOfPublication;
-
-
 
 
 }

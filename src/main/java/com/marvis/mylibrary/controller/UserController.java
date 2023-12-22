@@ -1,6 +1,8 @@
 package com.marvis.mylibrary.controller;
 
+import com.marvis.mylibrary.data.dto.request.BookRequest;
 import com.marvis.mylibrary.data.dto.request.UserRequest;
+import com.marvis.mylibrary.data.dto.response.BookResponse;
 import com.marvis.mylibrary.data.dto.response.UserResponse;
 import com.marvis.mylibrary.service.UserService;
 import jakarta.validation.Valid;
@@ -20,7 +22,7 @@ public class UserController {
 
     private final UserService userService;
 
-    @CacheEvict(value = "usersCache")
+
     @PostMapping("/users/add")
     public ResponseEntity<UserResponse> addUsers(@RequestBody @Valid UserRequest userRequest) {
         UserResponse addedUser = userService.addUser(userRequest);
@@ -33,7 +35,7 @@ public class UserController {
         return new ResponseEntity<>(userWithId, HttpStatus.OK);
     }
 
-    @Cacheable(value = "usersCache")
+
     @GetMapping("/users/all")
     public ResponseEntity<List<UserResponse>> getUsers() {
         List<UserResponse> userResponses = userService.getAllUsers();
@@ -53,7 +55,7 @@ public class UserController {
         return new ResponseEntity<>(userWithFullName, HttpStatus.OK);
     }
 
-    @CacheEvict(value = "usersCache")
+
     @PutMapping("/users/update-user/{id}")
     public ResponseEntity<String> updateUser(@PathVariable Long id, @RequestBody @Valid UserRequest userRequest) {
         String updateMessage = "User successfully updated";
@@ -61,11 +63,13 @@ public class UserController {
         return new ResponseEntity<>(updateMessage, HttpStatus.OK);
     }
 
-    @CacheEvict(value = "usersCache")
+
     @DeleteMapping("/users/delete/{id}")
     public ResponseEntity<String> deleteUser(@PathVariable Long id) {
         String deleteMessage = "User successfully deleted";
         userService.deleteUser(id);
         return new ResponseEntity<>(deleteMessage, HttpStatus.OK);
     }
+
+
 }
