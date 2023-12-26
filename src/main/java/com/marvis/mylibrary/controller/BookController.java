@@ -1,7 +1,9 @@
 package com.marvis.mylibrary.controller;
 
 import com.marvis.mylibrary.data.dto.request.BookRequest;
+import com.marvis.mylibrary.data.dto.request.BorrowBookRequest;
 import com.marvis.mylibrary.data.dto.response.BookResponse;
+import com.marvis.mylibrary.data.dto.response.BorrowedBookResponse;
 import com.marvis.mylibrary.service.BookService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -20,14 +22,20 @@ public class BookController {
 
     private final BookService bookService;
 
-    @CacheEvict(value = "booksCache")
+
     @PostMapping("/books/add")
     public ResponseEntity<BookResponse> addBooks(@RequestBody @Valid BookRequest bookRequest) {
         BookResponse addedBook = bookService.addBook(bookRequest);
         return new ResponseEntity<>(addedBook, HttpStatus.CREATED);
     }
 
-    @Cacheable(value = "booksCache")
+    @GetMapping("/books/borrow")
+    public ResponseEntity<BorrowedBookResponse> borrowBook(@RequestBody @Valid BorrowBookRequest borrowBookRequest) {
+        BorrowedBookResponse borrowedBook = bookService.borrowBook(borrowBookRequest);
+        return new ResponseEntity<>(borrowedBook, HttpStatus.OK);
+    }
+
+
     @GetMapping("/books/all")
     public ResponseEntity<List<BookResponse>> getBooks() {
         List<BookResponse> responses = bookService.getAllBooks();
@@ -52,7 +60,7 @@ public class BookController {
         return new ResponseEntity<>(bookWithIsbn, HttpStatus.OK);
     }
 
-    @CacheEvict(value = "booksCache")
+
     @DeleteMapping("/books/delete/{id}")
     public ResponseEntity<String> deleteBook(@PathVariable Long id) {
         String deleteMessage = "Book successfully deleted";

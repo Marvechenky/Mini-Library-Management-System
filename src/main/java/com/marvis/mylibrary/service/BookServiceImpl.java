@@ -1,10 +1,14 @@
 package com.marvis.mylibrary.service;
 
 import com.marvis.mylibrary.data.dto.request.BookRequest;
+import com.marvis.mylibrary.data.dto.request.BorrowBookRequest;
 import com.marvis.mylibrary.data.dto.response.BookResponse;
+import com.marvis.mylibrary.data.dto.response.BorrowedBookResponse;
 import com.marvis.mylibrary.data.model.Book;
 import com.marvis.mylibrary.data.model.BorrowedBook;
 import com.marvis.mylibrary.data.repository.BookRepository;
+import com.marvis.mylibrary.data.repository.BorrowedBookRepository;
+import com.marvis.mylibrary.data.repository.UserRepository;
 import com.marvis.mylibrary.exception.BookNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
@@ -19,6 +23,8 @@ import java.util.stream.Collectors;
 public class BookServiceImpl implements BookService {
 
     private final BookRepository bookRepository;
+    private final BorrowedBookRepository borrowedBookRepository;
+
 
     @Override
     @CacheEvict(value = "allBooks", allEntries = true)
@@ -42,17 +48,25 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    @CacheEvict(value = {"singleBook", "allBooks"}, key = "#id")
-    public BookResponse borrowBook(BookRequest bookRequest) {
-        Book book = Book.builder()
-                .subject(bookRequest.getSubject())
-                .title(bookRequest.getTitle())
-                .authorFullName(bookRequest.getAuthorFullName())
-                .yearOfPublication(bookRequest.getYearOfPublication())
+    @CacheEvict(value = {"singleBook", "allBooks"}, key = "#title")
+    public BorrowedBookResponse borrowBook(BorrowBookRequest borrowBookRequest) {
+        Book bookToBorrow =
+                bookRepository.findBookByTitleIgnoreCase(borrowBookRequest.getBookName());
+        if (bookToBorrow == null) {
+            throw new BookNotFoundException("Book with title not found");
+        }
+        BorrowedBook bookBorrowed = BorrowedBook.builder()
+                .bookName(bookToBorrow.getTitle())
+                .subject(bookToBorrow.getSubject())
+                .bookAuthor(bookToBorrow.getAuthorFullName())
                 .build();
+        BorrowedBook savedBorrowedBook = borrowedBookRepository.save(bookBorrowed);
 
-        Book borrowedBook = bookRepository.save(book);
-        return null;
+        return BorrowedBookResponse.builder()
+                .subject(savedBorrowedBook.getSubject())
+                .bookName(savedBorrowedBook.getBookName())
+                .bookAuthor(savedBorrowedBook.getBookAuthor())
+                .build();
     }
 
     @Override
