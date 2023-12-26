@@ -29,7 +29,7 @@ public class BookController {
         return new ResponseEntity<>(addedBook, HttpStatus.CREATED);
     }
 
-    @GetMapping("/books/borrow")
+    @PostMapping("/books/borrow")
     public ResponseEntity<BorrowedBookResponse> borrowBook(@RequestBody @Valid BorrowBookRequest borrowBookRequest) {
         BorrowedBookResponse borrowedBook = bookService.borrowBook(borrowBookRequest);
         return new ResponseEntity<>(borrowedBook, HttpStatus.OK);

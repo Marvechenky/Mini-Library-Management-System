@@ -48,7 +48,7 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    @CacheEvict(value = {"singleBook", "allBooks"}, key = "#title")
+    @CacheEvict(value = {"singleBook", "allBooks"}, key = "#id")
     public BorrowedBookResponse borrowBook(BorrowBookRequest borrowBookRequest) {
         Book bookToBorrow =
                 bookRepository.findBookByTitleIgnoreCase(borrowBookRequest.getBookName());
